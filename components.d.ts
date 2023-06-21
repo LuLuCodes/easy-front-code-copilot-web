@@ -37,6 +37,7 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     SettingButton: typeof import('./src/components/SettingButton.vue')['default']
     SqlExecDrawer: typeof import('./src/components/SqlExecDrawer.vue')['default']
+    ToggleTheme: typeof import('./src/components/ToggleTheme.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

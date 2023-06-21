@@ -1,6 +1,6 @@
 <template>
   <section class="page flex all-s">
-    <div class="pt20 pb20 pr20 flex-1">
+    <div class="flex-1">
       <div class="chat-body">
         <div class="flex all-c h50p pl24 pr24 bd-b1 space-b">
           <h4 class="f18">{{ curConversation && curConversation.title }}</h4>
@@ -113,6 +113,14 @@ const { messageList } = storeToRefs(messageStore)
 
 const conversationMessageList = computed(() => {
   return messageList.value.filter((message) => message.conversationId === curConversationId.value)
+})
+
+window.addEventListener('message', (event) => {
+  const message = event.data
+  console.log(`message: ${JSON.stringify(message)}`)
+  const workspace = window.vscode.workspace
+  const hostname = workspace.getConfiguration('lowcode').get('hostname', 'api.openai.com')
+  console.log(`hostname: `, hostname)
 })
 
 useCopyCode()
