@@ -93,6 +93,7 @@ import ToggleTheme from '@/components/ToggleTheme.vue'
 import { storeToRefs } from 'pinia'
 import { useGeneralConversationStore, useGeneralMessageStore } from '@/store'
 import { useCopyCode } from '@/hooks/useCopyCode'
+import { useInsertCode } from '@/hooks/useInsertCode'
 
 const MAX_TOKENS = 4000
 
@@ -133,8 +134,9 @@ window.addEventListener('message', async (event) => {
   }
 })
 
-useCopyCode()
 onMounted(() => {
+  useCopyCode()
+  useInsertCode()
   scrollToMessageListBottom()
 })
 
@@ -278,6 +280,8 @@ const handlerSendMessage = async (inputContent) => {
     updateMessage(assistantMessage.id, {
       status: 'DONE'
     })
+    useCopyCode(assistantMessage.id)
+    useInsertCode(assistantMessage.id)
   } catch (error) {
     updateMessage(assistantMessage.id, {
       content: error.message,
