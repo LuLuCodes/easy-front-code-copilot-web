@@ -6,11 +6,6 @@ const routes = [
     redirect: { name: 'chat' }
   },
   {
-    path: '/mysql',
-    name: 'mysql',
-    component: () => import('@/views/MySql.vue')
-  },
-  {
     path: '/chat',
     name: 'chat',
     meta: { requiresAuth: false },

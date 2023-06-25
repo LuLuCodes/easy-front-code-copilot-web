@@ -27,92 +27,38 @@ export const generalBot = {
   name: 'General bot',
   description: 'A general prompt of Chat.',
   avatar: '',
-  getPrompt: () => {
+  getSystemPrompt: () => {
     const basicPrompt = `Please be careful to return only key information, and try not to make it too long.`
     return basicPrompt
-  }
-}
-
-export const sqlBot = {
-  id: 'sql-chat-bot',
-  name: 'SQL Chat bot',
-  description: 'The wonderful SQL Chat bot.',
-  avatar: '',
-  getPrompt: (schema) => {
-    const generalPrompt = generalBot.getPrompt()
-    const basicPrompt = `Please follow the instructions to answer the questions:
-1. Set the language to the markdown code block for each code block. For example, \`SELECT * FROM table\` is SQL.`
-    return `${generalPrompt}\nThis is my database schema"${schema}". You will see the tables and columns in the database. And please answer the following questions about the database.\n${basicPrompt}`
-  }
-}
-
-export const sendMessagesToAzureAi = async ({ modelName, messages }) => {
-  const rawRes = await fetch(
-    `${import.meta.env.VITE_APP_BASE_API}/api/azure-gpt/chat-message-by-stream`,
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        model: modelName,
-        messages
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-        'x-from-swagger': 'swagger'
-      }
+  },
+  getTaskPrompt: (task, content) => {
+    let taskPrompt = ``
+    if (task === 'addCodeComments') {
+      taskPrompt = `\`\`\`${content}\`\`\`\r\n给这段代码添加注释。`
     }
-  )
-
-  const data = rawRes.body
-  if (!data) {
-    throw new Error('no data')
+    return taskPrompt
   }
-
-  return data
 }
 
-export const sendMessagesToOpenAi = async ({ modelName, messages }) => {
-  const rawRes = await fetch(
-    `${import.meta.env.VITE_APP_BASE_API}/api/chat-gpt/chat-message-by-stream`,
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        model: modelName,
-        messages
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-        'x-from-swagger': 'swagger'
-      }
-    }
-  )
+export const sendMessagesToOpenAi = async ({ hostname, apiKey, model, temperature, messages }) => {
+  const response = await fetch(`https://${hostname}/v1/chat/completions`, {
+    method: 'POST',
+    body: JSON.stringify({
+      model,
+      messages,
+      temperature,
+      stream: true
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`
+    },
+    responseType: 'stream'
+  })
 
-  const data = rawRes.body
-  if (!data) {
-    throw new Error('no data')
+  if (!response.ok) {
+    throw new Error(response.statusText)
   }
 
-  return data
-}
-
-export const sendMessagesToDrawer = async (params) => {
-  const rawRes = await fetch(
-    `${import.meta.env.VITE_APP_BASE_API}/api/drawer/create-image-by-stream`,
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        ...params
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-        'x-from-swagger': 'swagger'
-      }
-    }
-  )
-
-  const data = rawRes.body
-  if (!data) {
-    throw new Error('no data')
-  }
-
-  return data
+  return response.body
 }

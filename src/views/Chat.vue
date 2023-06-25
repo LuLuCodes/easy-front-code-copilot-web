@@ -3,7 +3,7 @@
     <div class="flex-1">
       <div class="chat-body">
         <div class="flex all-c h50p pl24 pr24 bd-b1 space-b">
-          <h4 class="f18">{{ curConversation && curConversation.title }}</h4>
+          <h4 class="f18">会话</h4>
           <ToggleTheme></ToggleTheme>
         </div>
         <div class="chat-content pt30 pb30">
@@ -96,6 +96,8 @@ import { useCopyCode } from '@/hooks/useCopyCode'
 
 const MAX_TOKENS = 4000
 
+let openAICofnig = null
+
 const inputPrompt = ref('')
 const inputPromptRef = ref(null)
 const promptSending = ref(false)
@@ -115,12 +117,20 @@ const conversationMessageList = computed(() => {
   return messageList.value.filter((message) => message.conversationId === curConversationId.value)
 })
 
-window.addEventListener('message', (event) => {
+window.addEventListener('message', async (event) => {
   const message = event.data
-  console.log(`message: ${JSON.stringify(message)}`)
-  const workspace = window.vscode.workspace
-  const hostname = workspace.getConfiguration('lowcode').get('hostname', 'api.openai.com')
-  console.log(`hostname: `, hostname)
+  console.log(JSON.stringify(message))
+  const { cmd, data } = message
+  if (cmd === 'vscodePushTask') {
+    const { task } = message
+    const inputContent = generalBot.getTaskPrompt(task, data)
+    if (inputContent) {
+      await handlerSendMessage(inputContent)
+      // window.vscode.postMessage({ data: inputContent })
+    }
+  } else if (cmd === 'vscodeOpenAIConfig') {
+    openAICofnig = data
+  }
 })
 
 useCopyCode()
@@ -145,8 +155,13 @@ const handlerSubmit = async () => {
   }
   inputPromptRef.value.blur()
   promptSending.value = true
-  let curConversationId = ''
+
   const inputContent = inputPrompt.value.trim()
+  await handlerSendMessage(inputContent)
+}
+
+const handlerSendMessage = async (inputContent) => {
+  let curConversationId = ''
   if (!curConversation.value) {
     curConversationId = createConversation(inputContent)
   } else {
@@ -166,11 +181,12 @@ const handlerSubmit = async () => {
   let tokens = countTextTokens(inputContent)
 
   // let usageMessageList = []
+  const maxTokens = openAICofnig.maxTokens || MAX_TOKENS
   const formatedMessageList = []
   for (let i = conversationMessageList.value.length - 1; i >= 0; i--) {
     const message = conversationMessageList.value[i]
     if (message.status === MessageStatus.DONE && message.content && !message.isWrong) {
-      if (tokens < MAX_TOKENS) {
+      if (tokens < maxTokens) {
         tokens += countTextTokens(message.content)
         formatedMessageList.unshift({
           role: message.creatorRole,
@@ -180,7 +196,7 @@ const handlerSubmit = async () => {
     }
   }
   addMessage(userMessage)
-  const systemPrompt = generalBot.getPrompt()
+  const systemPrompt = generalBot.getSystemPrompt()
 
   // Add the db prompt as the first context.
   formatedMessageList.unshift({
@@ -209,8 +225,8 @@ const handlerSubmit = async () => {
 
   try {
     const responseData = await sendMessagesToOpenAi({
-      modelName: '',
-      messages: formatedMessageList
+      messages: formatedMessageList,
+      ...openAICofnig
     })
 
     const reader = responseData.getReader()

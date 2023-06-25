@@ -28,3 +28,32 @@ export function useCopyCode() {
 
   onUpdated(() => copyCodeBlock())
 }
+
+export function useInserCode() {
+  function insertCodeBlock() {
+    const codeBlockWrapper = document.querySelectorAll('.code-block-wrapper')
+    codeBlockWrapper.forEach((wrapper) => {
+      const insertBtn = wrapper.querySelector('.icon-right')
+      const codeBlock = wrapper.querySelector('.code-block-body')
+      if (insertBtn && codeBlock) {
+        insertBtn.addEventListener('click', () => {
+          if (window.vscode) {
+            window.vscode.postMessage({
+              command: 'insertCode',
+              text: codeBlock.textContent ?? ''
+            })
+            ElMessage({
+              message: '已插入',
+              type: 'success',
+              duration: 1500
+            })
+          }
+        })
+      }
+    })
+  }
+
+  onMounted(() => insertCodeBlock())
+
+  onUpdated(() => insertCodeBlock())
+}

@@ -98,7 +98,7 @@ import mdKatex from '@traptitech/markdown-it-katex'
 import mila from 'markdown-it-link-attributes'
 import hljs from 'highlight.js'
 import { CreatorRole } from '@/utils'
-import { GeneralChatBotId, SQLChatBotId, DrawerChatBotId } from '@/store'
+import { GeneralChatBotId } from '@/store'
 
 const showRawText = ref(false)
 
@@ -165,9 +165,7 @@ const chat_txt_class = computed(() => {
 
 const avatar_class = computed(() => {
   return {
-    'icon-ie-ChatGPT': props.conversation.assistantId === GeneralChatBotId,
-    'icon-mysql': props.conversation.assistantId === SQLChatBotId,
-    'icon-image1': props.conversation.assistantId === DrawerChatBotId
+    'icon-ie-ChatGPT': props.conversation.assistantId === GeneralChatBotId
   }
 })
 
@@ -180,10 +178,7 @@ const typing_class = computed(() => {
 
 const messageContent = computed(() => {
   const value = props.message.content || ''
-  if (
-    props.message.creatorRole === CreatorRole.User ||
-    props.conversation.assistantId === DrawerChatBotId
-  ) {
+  if (props.message.creatorRole === CreatorRole.User) {
     return value
   }
   return mdi.render(value)
@@ -230,13 +225,7 @@ const handlerActionImage = (action) => {
 }
 
 function highlightBlock(str, lang = '') {
-  return `<pre id="${props.message.id}" assistant-id= "${
-    props.conversation.assistantId
-  }" class="code-block-wrapper"><div class="code-box-top flex all-c pl16 pr16"><span class="flex-1">${lang}</span><span class="icon icon-copy pointer"></span>${
-    props.conversation.assistantId === SQLChatBotId
-      ? '<span class="icon icon-play ml10 pointer"></span>'
-      : ''
-  }</div><code class="code-block-body hljs p12 ${lang}">${str}</code></pre>`
+  return `<pre id="${props.message.id}" assistant-id= "${props.conversation.assistantId}" class="code-block-wrapper"><div class="code-box-top flex all-c pl16 pr16"><span class="flex-1">${lang}</span><span class="icon icon-right pointer"></span><span class="icon icon-copy pointer"></span></div><code class="code-block-body hljs p12 ${lang}">${str}</code></pre>`
 }
 
 const mdi = new MarkdownIt({
