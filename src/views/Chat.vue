@@ -24,7 +24,7 @@
             :readonly="promptSending"
             @keyup.enter="handlerSubmit"
           />
-          <el-popover :visible="chatPopupVisible" trigger="click" placement="top" :width="540">
+          <!-- <el-popover :visible="chatPopupVisible" trigger="click" placement="top" :width="540">
             <div class="pl10 pr10">
               <h3 class="f14"><b>设置</b></h3>
               <h4 class="f14 mt20 mb10">语言模型</h4>
@@ -53,10 +53,10 @@
                 class="icon icon-shezhi f18 ml10 mr10 pointer"
               ></span>
             </template>
-          </el-popover>
-          <el-tooltip class="box-item" effect="dark" content="重新生成" placement="top">
+          </el-popover> -->
+          <!-- <el-tooltip class="box-item" effect="dark" content="重新生成" placement="top">
             <span class="icon icon-shuaxin f18 ml10 mr10 pointer"></span>
-          </el-tooltip>
+          </el-tooltip> -->
           <el-tooltip class="box-item" effect="dark" content="清除输入" placement="top">
             <span
               class="icon icon-qingchu f18 ml10 mr10 pointer"
@@ -104,7 +104,7 @@ const inputPromptRef = ref(null)
 const promptSending = ref(false)
 
 const messageScrollbarRef = ref(null)
-const chatPopupVisible = ref(false)
+// const chatPopupVisible = ref(false)
 
 const conversationStore = useGeneralConversationStore()
 const { createConversation, updateConversation } = conversationStore
@@ -127,7 +127,6 @@ window.addEventListener('message', async (event) => {
     const inputContent = generalBot.getTaskPrompt(task, data)
     if (inputContent) {
       await handlerSendMessage(inputContent)
-      // window.vscode.postMessage({ data: inputContent })
     }
   } else if (cmd === 'vscodeOpenAIConfig') {
     openAICofnig = data
@@ -324,7 +323,7 @@ const handlerSendMessage = async (inputContent) => {
 }
 .chat-content {
   height: calc(100vh - 170px);
-  max-width: 76%;
+  max-width: 90%;
   margin: 0 auto;
   overflow: hidden;
   box-sizing: border-box;
