@@ -57,10 +57,10 @@
           <!-- <el-tooltip class="box-item" effect="dark" content="重新生成" placement="top">
             <span class="icon icon-shuaxin f18 ml10 mr10 pointer"></span>
           </el-tooltip> -->
-          <el-tooltip class="box-item" effect="dark" content="清除输入" placement="top">
+          <el-tooltip class="box-item" effect="dark" content="清除会话记录" placement="top">
             <span
               class="icon icon-qingchu f18 ml10 mr10 pointer"
-              @click.prevent.stop="inputPrompt = ''"
+              @click.prevent.stop="handlerClearMessages"
             ></span>
           </el-tooltip>
           <span
@@ -111,7 +111,7 @@ const { createConversation, updateConversation } = conversationStore
 const { curConversationId, curConversation } = storeToRefs(conversationStore)
 
 const messageStore = useGeneralMessageStore()
-const { addMessage, updateMessage } = messageStore
+const { addMessage, updateMessage, delMessageByConversationId } = messageStore
 const { messageList } = storeToRefs(messageStore)
 
 const conversationMessageList = computed(() => {
@@ -143,6 +143,12 @@ const scrollToMessageListBottom = () => {
   const scrollbar_view = messageScrollbarRef.value.$el.querySelector('.el-scrollbar__view')
   if (scrollbar_view.scrollHeight > 800) {
     messageScrollbarRef.value.setScrollTop(scrollbar_view.scrollHeight)
+  }
+}
+
+const handlerClearMessages = () => {
+  if (curConversationId.value) {
+    delMessageByConversationId(curConversationId.value)
   }
 }
 
