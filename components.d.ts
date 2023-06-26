@@ -10,16 +10,12 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     ConnectionEditDialog: typeof import('./src/components/ConnectionEditDialog.vue')['default']
-    ElButton: typeof import('element-plus/es')['ElButton']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
     ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
     ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
     ElImage: typeof import('element-plus/es')['ElImage']
     ElInput: typeof import('element-plus/es')['ElInput']
-    ElOption: typeof import('element-plus/es')['ElOption']
-    ElPopover: typeof import('element-plus/es')['ElPopover']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
-    ElSelect: typeof import('element-plus/es')['ElSelect']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     LeftSideNav: typeof import('./src/components/LeftSideNav.vue')['default']
     Message: typeof import('./src/components/Message.vue')['default']

@@ -36,7 +36,7 @@ export const generalBot = {
     if (task === 'addCodeComments') {
       taskPrompt = `\`\`\`${content}\`\`\`\n\n给这段代码添加注释。`
     } else if (task === 'explainCode') {
-      taskPrompt = `\`\`\`${content}\`\`\`\n\n详细这段代码的作用。`
+      taskPrompt = `\`\`\`${content}\`\`\`\n\n详细解释这段代码的作用。`
     } else if (task === 'refactorCode') {
       taskPrompt = `\`\`\`${content}\`\`\`\n\n重构优化这段代码，并修复其中的bug。`
     } else if (task === 'generateTestCases') {
